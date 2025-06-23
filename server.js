@@ -68,8 +68,6 @@ app.get("/apps/killboard", async (req, res) => {
         edges {
           node {
             id
-            firstName
-            lastName
             metafield(namespace: "rc_arsenal", key: "username") { value }
             level: metafield(namespace: "rc_arsenal", key: "level") { value }
             xp: metafield(namespace: "rc_arsenal", key: "xp") { value }
@@ -86,7 +84,7 @@ app.get("/apps/killboard", async (req, res) => {
     const response = await shopifyFetch(query)
     const players = response.data.customers.edges.map(({ node }) => ({
       id: node.id,
-      name: node.metafield?.value || `${node.firstName || ""} ${node.lastName || ""}`.trim() || "Unnamed Pilot",
+      name: node.metafield?.value || "Unnamed Pilot",
       level: Number.parseInt(node.level?.value || "1", 10),
       xp: Number.parseInt(node.xp?.value || "0", 10),
       victories: Number.parseInt(node.victories?.value || "0", 10),
@@ -119,8 +117,6 @@ app.get("/apps/garage-data", async (req, res) => {
         query getCustomer($id: ID!) {
             customer(id: $id) {
                 id
-                firstName
-                lastName
                 metafields(namespace: "rc_arsenal", first: 10) {
                     edges {
                         node {
@@ -147,7 +143,7 @@ app.get("/apps/garage-data", async (req, res) => {
     })
 
     // Add defaults if not present
-    garageData.username = garageData.username || `${customerNode.firstName || ""} ${customerNode.lastName || ""}`.trim()
+    garageData.username = garageData.username || "Unnamed Pilot"
     garageData.level = Number.parseInt(garageData.level || "1", 10)
     garageData.xp = Number.parseInt(garageData.xp || "0", 10)
     garageData.victories = Number.parseInt(garageData.victories || "0", 10)
